@@ -4,6 +4,7 @@ use Modern::Perl;
 use File::Basename;
 use File::Path 'make_path';
 use autodie;
+use IO::Moose::File;
 
 #TODO: check for presence of valid region!!!!
 #TODO: require certain arguments to be defined
@@ -77,6 +78,11 @@ has 'nogap' => (
     default => 1,
 );
 
+has 'log_file' => (
+    is      => 'ro',
+    isa     => 'Str',
+);
+
 has 'verbose' => (
     is      => 'ro',
     isa     => 'Bool',
@@ -107,6 +113,14 @@ sub _make_dir {
     make_path( $dir_name );
 }
 
+sub _open_fh {
+    my $self = shift;
+
+    $io = IO::Moose::File->new;
+    $io->open( $self->log_file, "a" );
+    return $io;
+}
+
 sub _validity_tests {
     my $self = shift;
 
@@ -118,8 +132,9 @@ sub _validity_tests {
 sub _valid_bam {
     my $self = shift;
 
+    my $fh = $self->open_fh;
     if ( -e $self->bam and $self->bam =~ m/.bam$/i ) {
-        say "  Found valid bam file: " . $self->bam if $self->verbose;
+        say $fh "  Found valid bam file: " . $self->bam if $self->verbose;
         return 1;
     }
     else {

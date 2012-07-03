@@ -17,8 +17,9 @@ my $coverage = coverage_commander->new(
     # pos_end    => 570900,
     out_file   => "chr01.test",
     verbose    => 1,
+    log        => "log_file",
     # nogap => 0,
-  );
+);
 # p $coverage;  
 say $coverage->samtools_cmd_gaps;
 say $coverage->samtools_cmd_nogaps;
